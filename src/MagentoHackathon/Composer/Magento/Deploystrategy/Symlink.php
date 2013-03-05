@@ -65,7 +65,7 @@ class Symlink extends DeploystrategyAbstract
 
         // Handle source to dir linking,
         // e.g. Namespace_Module.csv => app/locale/de_DE/
-        if (file_exists($destPath) && is_dir($destPath)){
+        if (file_exists($destPath) && is_dir($destPath) && is_file($sourcePath)){
             $newDest = $destPath . '/' . basename($source);
             return $this->create($source, substr($newDest, strlen($this->getDestDir())+1));
         }
