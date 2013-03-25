@@ -18,6 +18,11 @@ use Composer\Package\PackageInterface;
 class Installer extends LibraryInstaller implements InstallerInterface
 {
     /**
+     * Default strategy for the deployment
+     */
+    const DEFAULT_STRATEGY = 'symlink';
+
+    /**
      * The base directory of the magento installation
      *
      * @var \SplFileInfo
@@ -53,11 +58,6 @@ class Installer extends LibraryInstaller implements InstallerInterface
      * @var string
      */
     protected $_source_dir;
-
-    /**
-     * @var string
-     */
-    protected $_deployStrategy = "symlink";
 
     /**
      * Initializes Magento Module installer
@@ -104,10 +104,6 @@ class Installer extends LibraryInstaller implements InstallerInterface
             $this->isForced = (bool)$extra['magento-force'];
         }
 
-        if (isset($extra['magento-deploystrategy'])) {
-            $this->setDeployStrategy((string)$extra['magento-deploystrategy']);
-        }
-
         if (!empty($extra['skip-package-deployment'])) {
             $this->skipPackageDeployment = true;
         }
@@ -125,14 +121,15 @@ class Installer extends LibraryInstaller implements InstallerInterface
      * Returns the strategy class used for deployment
      *
      * @param \Composer\Package\PackageInterface $package
-     * @param string $strategy
      * @return \MagentoHackathon\Composer\Magento\Deploystrategy\DeploystrategyAbstract
      */
-    public function getDeployStrategy(PackageInterface $package, $strategy = null)
+    public function getDeployStrategy(PackageInterface $package)
     {
-        if (null === $strategy) {
-            $strategy = $this->_deployStrategy;
-        }
+        $extra = $package->getExtra();
+
+        $strategy = (isset($extra['magento-deploystrategy']))
+            ? $extra['magento-deploystrategy'] : self::DEFAULT_STRATEGY;
+
         $targetDir = $this->getTargetDir();
         $sourceDir = $this->getSourceDir($package);
         switch ($strategy) {
