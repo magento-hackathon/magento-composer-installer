@@ -88,3 +88,7 @@ what I'd like to see most is improving workflow, fixing of bugs, supporting more
 perhaps supporting different deployment methods in a single composer.json, things like that. All in all, I am 
 very content with the composer integration as it is now.
 
+nhp: I think Option 2 would be viable, because imho it it way to soon for option 1, like vinai and avstudnitz already said, it will take some time
+for magento 2 to get going and become widely used. Option 3 sounds very nice and most like "the composer way" and i have ssen it working in other projects
+but i could imagine, that the changes to magento could be more than anybody that wants updateability could accept.
+
