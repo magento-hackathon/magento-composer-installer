@@ -82,26 +82,19 @@ Notes:
 
 ### Make a module installable with composer
 
-
-To make a Magento module installable with composer, this is how to set up the ```composer.json``` for your extension:
+This is how to set up the ```composer.json``` for your extension:
 
 ```json
 {
     "name": "your-vendor-name/module-name",
     "type": "magento-module",
-    "license":"OSL-3.0",
-    "description":"A short one line description of your module",
-    "authors":[
-        {
-            "name":"Author Name",
-            "email":"author@example.com"
-        }
-    ],
     "require": {
         "magento-hackathon/magento-composer-installer": "*"
     }
 }
 ```
+
+To make a Magento module installable with composer, ensure it's composer.json require's `magento-composer-installer`, as well as sets the `type` field to `magento-module` which is what triggers the symlinking to happen.
 
 
 If you would like to publish your module on http://packages.firegento.com/, please fork
