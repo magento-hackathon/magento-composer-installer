@@ -290,7 +290,7 @@ If you want to have the deployed files automatically added to your .gitignore fi
     ...
     "extra":{
         "magento-root-dir": "htdocs/",
-        auto-append-gitignore": true
+        "auto-append-gitignore": true
     }
     ...
 }
@@ -369,12 +369,12 @@ curl -s https://getcomposer.org/installer | php -- --install-dir=bin
 #### On Windows
 Please take a look at http://getcomposer.org/doc/00-intro.md#installation-windows
 
-Creation of symbolic links requires the SeCreateSymbolicLinkPrivilege (“Create symbolic links”), which is granted only
+Creation of symbolic links requires the SeCreateSymbolicLinkPrivilege (â€œCreate symbolic linksâ€), which is granted only
 to administrators by default (but you can change that using security policy).
 
 To change the policies:
-- Launch secpol.msc via Start or Start → Run.
-- Open Security Settings → Local Policies → User Rights Assignment.
+- Launch secpol.msc via Start or Start â†’ Run.
+- Open Security Settings â†’ Local Policies â†’ User Rights Assignment.
 - In the list, find the "Create symbolic links" item, which represents SeCreateSymbolicLinkPrivilege.
     Double-click on the item and add yourself (or the whole Users group) to the list.
 
@@ -403,7 +403,7 @@ php bin/composer.phar install
 ### Core Contributors
 
 * Daniel Fahlke aka Flyingmana (Maintainer)
-* Jörg Weller
+* JÃ¶rg Weller
 * Karl Spies
 * Tobias Vogt
 * David Fuhr
