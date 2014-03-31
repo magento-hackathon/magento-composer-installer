@@ -369,12 +369,12 @@ curl -s https://getcomposer.org/installer | php -- --install-dir=bin
 #### On Windows
 Please take a look at http://getcomposer.org/doc/00-intro.md#installation-windows
 
-Creation of symbolic links requires the SeCreateSymbolicLinkPrivilege (“Create symbolic links”), which is granted only
+Creation of symbolic links requires the SeCreateSymbolicLinkPrivilege (â€œCreate symbolic linksâ€), which is granted only
 to administrators by default (but you can change that using security policy).
 
 To change the policies:
-- Launch secpol.msc via Start or Start → Run.
-- Open Security Settings → Local Policies → User Rights Assignment.
+- Launch secpol.msc via Start or Start â†’ Run.
+- Open Security Settings â†’ Local Policies â†’ User Rights Assignment.
 - In the list, find the "Create symbolic links" item, which represents SeCreateSymbolicLinkPrivilege.
     Double-click on the item and add yourself (or the whole Users group) to the list.
 
@@ -402,4 +402,31 @@ php bin/composer.phar install
 
 ### Core Contributors
 
-* Daniel Fahlke aka Fl
+* Daniel Fahlke aka Flyingmana (Maintainer)
+* JÃ¶rg Weller
+* Karl Spies
+* Tobias Vogt
+* David Fuhr
+* Vinai Kopp (Maintainer)
+
+
+### Current Status of Project
+
+Complete, fully working.
+
+
+### support contacts
+
+* irc: freenode the channels #magento #magento-composer and for german speaking people #magento-de 
+
+
+If you need training or help to introduce Composer into your companies workflow,
+you have the chance to hire one of the following people/companies.
+
+* Daniel Fahlke aka Flyingmana (Maintainer): flyingmana@googlemail.com
+* Your Name here
+* Your Name here
+* Your Company Name here
+* Your Company Name here
+
+
