@@ -290,7 +290,7 @@ If you want to have the deployed files automatically added to your .gitignore fi
     ...
     "extra":{
         "magento-root-dir": "htdocs/",
-        auto-append-gitignore": true
+        "auto-append-gitignore": true
     }
     ...
 }
@@ -402,31 +402,4 @@ php bin/composer.phar install
 
 ### Core Contributors
 
-* Daniel Fahlke aka Flyingmana (Maintainer)
-* Jörg Weller
-* Karl Spies
-* Tobias Vogt
-* David Fuhr
-* Vinai Kopp (Maintainer)
-
-
-### Current Status of Project
-
-Complete, fully working.
-
-
-### support contacts
-
-* irc: freenode the channels #magento #magento-composer and for german speaking people #magento-de 
-
-
-If you need training or help to introduce Composer into your companies workflow,
-you have the chance to hire one of the following people/companies.
-
-* Daniel Fahlke aka Flyingmana (Maintainer): flyingmana@googlemail.com
-* Your Name here
-* Your Name here
-* Your Company Name here
-* Your Company Name here
-
-
+* Daniel Fahlke aka Fl
