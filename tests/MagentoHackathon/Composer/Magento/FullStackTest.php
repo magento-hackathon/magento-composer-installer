@@ -21,10 +21,17 @@ class FullStackTest extends \PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         $process = new Process(
-            'sed -i \'s/"test_version"/"version"/g\' ./composer.json',
+            'perl -pi -e \'s/"test_version"/"version"/g\' ./composer.json',
             self::getProjectRoot() 
         );
         $process->run();
+        if ($process->getExitCode() !== 0) {
+            $message = 'process for <code>'.$process->getCommandLine().'</code> exited with '.$process->getExitCode().': '.$process->getExitCodeText();
+            $message .= PHP_EOL.'Error Message:'.PHP_EOL.$process->getErrorOutput();
+            $message .= PHP_EOL.'Output:'.PHP_EOL.$process->getOutput();
+            echo $message;
+        }
+        
         $process = new Process(
             self::getComposerCommand().' archive --format=zip --dir="tests/FullStackTest/artifact" -vvv',
             self::getProjectRoot()
@@ -59,10 +66,16 @@ class FullStackTest extends \PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         $process = new Process(
-            'sed -i \'s/"version"/"test_version"/g\' ./composer.json',
+            'perl -pi -e \'s/"version"/"test_version"/g\' ./composer.json',
             self::getProjectRoot()
         );
         $process->run();
+        if ($process->getExitCode() !== 0) {
+            $message = 'process for <code>'.$process->getCommandLine().'</code> exited with '.$process->getExitCode().': '.$process->getExitCodeText();
+            $message .= PHP_EOL.'Error Message:'.PHP_EOL.$process->getErrorOutput();
+            $message .= PHP_EOL.'Output:'.PHP_EOL.$process->getOutput();
+            echo $message;
+        }
     }
     
     protected static function getBasePath(){
