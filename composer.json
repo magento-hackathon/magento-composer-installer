@@ -49,6 +49,6 @@
     },
     "extra":{
         "composer-command-registry": [ "MagentoHackathon\\Composer\\Magento\\Command\\DeployCommand" ],
-        "class":"MagentoHackathon\\Composer\\Magento\\Installer"
+        "class":"MagentoHackathon\\Composer\\Magento\\InstallerPlugin"
     }
 }
