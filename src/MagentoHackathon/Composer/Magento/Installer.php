@@ -220,6 +220,7 @@ class Installer extends LibraryInstaller implements InstallerInterface
      */
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
+        echo "Installation for Hackathon happened Here. ";
         parent::install($repo, $package);
 
         $strategy = $this->getDeployStrategy($package);
