@@ -33,24 +33,37 @@ class DeployManager {
      * @var array
      */
     protected $sortPriority = array();
-    
-    
-    public function __construct( IOInterface $io )
+
+    /**
+     * @var ProjectConfig
+     */
+    protected $projectConfig;
+
+    /**
+     * @param IOInterface   $io
+     * @param ProjectConfig $projectConfig
+     */
+    public function __construct(IOInterface $io, ProjectConfig $projectConfig )
     {
         $this->io = $io;
+        $this->projectConfig = $projectConfig;
     }
-    
-    
-    public function addPackage( Entry $package )
+
+    /**
+     * @param Entry $package
+     */
+    public function addPackage(Entry $package)
     {
         $this->packages[] = $package;
     }
-    
-    public function setSortPriority( $priorities )
+
+    /**
+     * @param $priorities
+     */
+    public function setSortPriority($priorities)
     {
         $this->sortPriority = $priorities;
     }
-
 
     /**
      * uses the sortPriority Array to sort the packages.
@@ -84,7 +97,6 @@ class DeployManager {
         );
     }
     
-    
     public function doDeploy()
     {
         $this->sortPackages();
@@ -94,7 +106,52 @@ class DeployManager {
                 $this->io->write('start magento deploy for '. $package->getPackageName() );
             }
             $package->getDeployStrategy()->deploy();
+
+            $deployedFiles = $package->getDeployStrategy()->getDeployedFiles();
+
+            if ($this->projectConfig->hasAutoAppendGitignore()) {
+                $this->appendGitIgnore($package, $deployedFiles, $this->getGitIgnoreFileLocation());
+            }
         }
     }
 
+    /**
+     * Get .gitignore file location
+     *
+     * @return string
+     */
+    public function getGitIgnoreFileLocation()
+    {
+        $ignoreFile = $this->projectConfig->getMagentoRootDir() . '/.gitignore';
+        return $ignoreFile;
+    }
+
+    /**
+     * Add all the files which are to be deployed
+     * to the .gitignore file, if it doesn't
+     * exist then create a new one
+     *
+     * @param Entry $package
+     * @param array $deployedFiles
+     */
+    public function appendGitIgnore(Entry $package, array $deployedFiles, $ignoreFile)
+    {
+        $contents = array();
+        if (file_exists($ignoreFile)) {
+            $contents = file($ignoreFile, FILE_IGNORE_NEW_LINES);
+        }
+
+        foreach ($deployedFiles as $ignore) {
+            if (!in_array($ignore, $contents)) {
+                $additions[] = $ignore;
+            }
+        }
+
+        if (!empty($additions)) {
+            array_unshift($additions, '#' . $package->getPackageName());
+            $contents = array_merge($contents, $additions);
+            file_put_contents($ignoreFile, implode("\n", $contents));
+        }
+    }
 }
+
