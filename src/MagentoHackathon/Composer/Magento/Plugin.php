@@ -66,10 +66,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      * @param Composer    $composer
      * @param IOInterface $io
      */
-    protected function initDeployManager(Composer $composer, IOInterface $io)
+    protected function initDeployManager(Composer $composer, IOInterface $io, ProjectConfig $config)
     {
-        $this->deployManagers['core'] = new DeployManager($io);
-        $this->deployManagers['module'] = new DeployManager($io);
+        $this->deployManagers['core'] = new DeployManager($io, $config);
+        $this->deployManagers['module'] = new DeployManager($io, $config);
         $this->deployManagers['module']->setSortPriority($this->getSortPriority($composer));
     }
 
@@ -120,7 +120,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $this->filesystem = new Filesystem();
         $this->config = new ProjectConfig($composer->getPackage()->getExtra());
 
-        $this->initDeployManager($composer, $io);
+        $this->initDeployManager($composer, $io, $this->config);
 
         $this->writeDebug('activate magento plugin');
 
