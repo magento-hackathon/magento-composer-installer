@@ -25,6 +25,7 @@ use MagentoHackathon\Composer\Magento\MapParser;
 use MagentoHackathon\Composer\Magento\ModmanParser;
 use MagentoHackathon\Composer\Magento\PackageXmlParser;
 use MagentoHackathon\Composer\Magento\Parser;
+use MagentoHackathon\Composer\Magento\Parser\ParserFactoryInterface;
 use MagentoHackathon\Composer\Magento\ProjectConfig;
 
 /**
@@ -114,24 +115,29 @@ abstract class MagentoInstallerAbstract extends LibraryInstaller implements Inst
     protected $config;
 
     /**
-     * @var array Path mapping prefixes that need to be translated (i.e. to
-     * use a public directory as the web server root).
+     * @var ParserFactoryInterface
      */
-    protected $_pathMappingTranslations = array();
+    protected $parserFactory;
 
     /**
      * Initializes Magento Module installer
      *
      * @param \Composer\IO\IOInterface $io
-     * @param \Composer\Composer       $composer
-     * @param string                   $type
-     *
+     * @param \Composer\Composer $composer
+     * @param ParserFactoryInterface $parserFactory
+     * @param string $type
      * @throws \ErrorException
      */
-    public function __construct(IOInterface $io, Composer $composer, $type = 'magento-module')
-    {
+    public function __construct(
+        IOInterface $io,
+        Composer $composer,
+        ParserFactoryInterface $parserFactory,
+        $type = 'magento-module'
+    ) {
         parent::__construct($io, $composer, $type);
         $this->initializeVendorDir();
+
+        $this->parserFactory = $parserFactory;
 
         $this->annoy($io);
 
@@ -165,10 +171,6 @@ abstract class MagentoInstallerAbstract extends LibraryInstaller implements Inst
 
         if ($this->getConfig()->hasDeployStrategy()) {
             $this->setDeployStrategy($this->getConfig()->getDeployStrategy());
-        }
-
-        if ($this->getConfig()->hasPathMappingTranslations()) {
-            $this->_pathMappingTranslations = $this->getConfig()->getPathMappingTranslations();
         }
     }
 
@@ -448,36 +450,11 @@ abstract class MagentoInstallerAbstract extends LibraryInstaller implements Inst
      */
     public function getParser(PackageInterface $package)
     {
-        $extra = $package->getExtra();
-        $moduleSpecificMap = $this->composer->getPackage()->getExtra();
-        if (isset($moduleSpecificMap['magento-map-overwrite'])) {
-            $moduleSpecificMap = $this->transformArrayKeysToLowerCase($moduleSpecificMap['magento-map-overwrite']);
-            if (isset($moduleSpecificMap[$package->getName()])) {
-                $map = $moduleSpecificMap[$package->getName()];
-            }
-        }
-
-        if (isset($map)) {
-            $parser = new MapParser($map, $this->_pathMappingTranslations);
-
-            return $parser;
-        } elseif (isset($extra['map'])) {
-            $parser = new MapParser($extra['map'], $this->_pathMappingTranslations);
-
-            return $parser;
-        } elseif (isset($extra['package-xml'])) {
-            $parser = new PackageXmlParser(
-                $this->getSourceDir($package), $extra['package-xml'], $this->_pathMappingTranslations
-            );
-
-            return $parser;
-        } elseif (file_exists($this->getSourceDir($package) . '/modman')) {
-            $parser = new ModmanParser($this->getSourceDir($package), $this->_pathMappingTranslations);
-
-            return $parser;
-        } else {
-            throw new \ErrorException('Unable to find deploy strategy for module: no known mapping');
-        }
+        return $this->parserFactory->make(
+            $package,
+            $this->composer->getPackage(),
+            $this->getSourceDir($package)
+        );
     }
 
     /**
@@ -502,16 +479,6 @@ abstract class MagentoInstallerAbstract extends LibraryInstaller implements Inst
         }
 
         return $installPath;
-    }
-
-    public function transformArrayKeysToLowerCase($array)
-    {
-        $arrayNew = array();
-        foreach ($array as $key => $value) {
-            $arrayNew[strtolower($key)] = $value;
-        }
-
-        return $arrayNew;
     }
 
     /**
