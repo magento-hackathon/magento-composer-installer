@@ -7,6 +7,7 @@ namespace MagentoHackathon\Composer\Magento\Installer;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
+use MagentoHackathon\Composer\Magento\Parser\ParserFactoryInterface;
 
 /**
  * Class ModuleInstaller
@@ -27,9 +28,13 @@ class ModuleInstaller extends MagentoInstallerAbstract
      *
      * @throws \ErrorException
      */
-    public function __construct(IOInterface $io, Composer $composer, $type = self::PACKAGE_TYPE)
-    {
-        parent::__construct($io, $composer, $type);
+    public function __construct(
+        IOInterface $io,
+        Composer $composer,
+        ParserFactoryInterface $parserFactory,
+        $type = 'magento-module'
+    ) {
+        parent::__construct($io, $composer, $parserFactory, $type);
     }
 
     /**
