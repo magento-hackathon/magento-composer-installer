@@ -18,9 +18,9 @@ class MapParser implements Parser
     protected $mappings = array();
 
     /**
-     * @param $mappings
+     * @param array $mappings
      */
-    public function __construct($mappings)
+    public function __construct(array $mappings)
     {
         $this->mappings = $mappings;
     }

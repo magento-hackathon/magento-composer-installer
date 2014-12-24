@@ -15,7 +15,7 @@ class ParserFactory implements ParserFactoryInterface
     /**
      * @param PackageInterface $package
      * @param RootPackageInterface $rootPackage
-     * @param $sourceDir
+     * @param string $sourceDir
      * @return Parser
      * @throws \ErrorException
      */

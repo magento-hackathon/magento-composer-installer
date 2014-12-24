@@ -2,7 +2,10 @@
 
 namespace MagentoHackathon\Composer\Magento\Parser;
 
-
+/**
+ * Class MapParserTest
+ * @package MagentoHackathon\Composer\Magento\Parser
+ */
 class MapParserTest extends \PHPUnit_Framework_TestCase
 {
 

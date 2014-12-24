@@ -16,7 +16,7 @@ interface ParserFactoryInterface
     /**
      * @param PackageInterface $package
      * @param RootPackageInterface $rootPackage
-     * @param $sourceDir
+     * @param string $sourceDir
      * @return Parser
      */
     public function make(PackageInterface $package, RootPackageInterface $rootPackage, $sourceDir);

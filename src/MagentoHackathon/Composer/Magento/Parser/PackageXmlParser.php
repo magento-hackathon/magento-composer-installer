@@ -7,6 +7,9 @@ namespace MagentoHackathon\Composer\Magento\Parser;
 
 /**
  * Parses Magento Connect 2.0 package.xml files
+ *
+ * Class PackageXmlParser
+ * @package MagentoHackathon\Composer\Magento\Parser
  */
 class PackageXmlParser implements Parser
 {

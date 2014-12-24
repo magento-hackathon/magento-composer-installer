@@ -5,6 +5,9 @@ namespace MagentoHackathon\Composer\Magento\Parser;
 /**
  * Parser class supporting translating path mappings according to
  * the composer.json configuration.
+ *
+ * Class PathTranslationParser
+ * @package MagentoHackathon\Composer\Magento\Parser
  */
 class PathTranslationParser implements Parser
 {

@@ -1,17 +1,15 @@
 <?php
+
 namespace MagentoHackathon\Composer\Magento\Parser;
 
-use MagentoHackathon\Composer\Magento\Installer\ModuleInstaller;
-use Composer\Util\Filesystem;
 use Composer\Test\TestCase;
-use Composer\Composer;
 use Composer\Config;
 
 /**
  * Test that path mapping translations work correctly, including different
  * prefix types (i.e. 'js/...' vs './js/...').
  */
-class PathMappingTranslationTestModule extends \PHPUnit_Framework_TestCase
+class PathMappingTranslationTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testTranslate()
