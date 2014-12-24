@@ -45,6 +45,8 @@ class ParserFactory implements ParserFactoryInterface
             return new ModmanParser($modmanFile);
         }
 
-        throw new \ErrorException('Unable to find deploy strategy for module: no known mapping');
+        throw new \ErrorException(
+            sprintf('Unable to find deploy strategy for module: "%s" no known mapping', $package->getName())
+        );
     }
 }
