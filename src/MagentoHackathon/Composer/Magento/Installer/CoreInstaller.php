@@ -14,6 +14,7 @@ use InvalidArgumentException;
 use MagentoHackathon\Composer\Magento\Deploystrategy\Copy;
 use MagentoHackathon\Composer\Magento\Deploy\Manager\Entry;
 use MagentoHackathon\Composer\Magento\Deploystrategy\Core;
+use MagentoHackathon\Composer\Magento\Parser\ParserFactoryInterface;
 
 /**
  * Class CoreInstaller
@@ -87,14 +88,19 @@ class CoreInstaller extends MagentoInstallerAbstract
 
     /**
      * @param IOInterface $io
-     * @param Composer    $composer
-     * @param string      $type
+     * @param Composer $composer
+     * @param ParserFactoryInterface $parserFactory
+     * @param string $type
      *
      * @throws \ErrorException
      */
-    public function __construct(IOInterface $io, Composer $composer, $type = self::PACKAGE_TYPE)
-    {
-        parent::__construct($io, $composer, $type);
+    public function __construct(
+        IOInterface $io,
+        Composer $composer,
+        ParserFactoryInterface $parserFactory,
+        $type = 'magento-module'
+    ) {
+        parent::__construct($io, $composer, $parserFactory, $type);
     }
 
     /**

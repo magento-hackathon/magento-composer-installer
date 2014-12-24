@@ -23,8 +23,9 @@ class ModuleInstaller extends MagentoInstallerAbstract
 
     /**
      * @param IOInterface $io
-     * @param Composer    $composer
-     * @param string      $type
+     * @param Composer $composer
+     * @param ParserFactoryInterface $parserFactory
+     * @param string $type
      *
      * @throws \ErrorException
      */
