@@ -6,6 +6,8 @@ use Composer\Test\TestCase;
 use Composer\Composer;
 use Composer\Config;
 use MagentoHackathon\Composer\Magento\Installer\ModuleInstaller;
+use MagentoHackathon\Composer\Magento\Parser\ParserFactory;
+use MagentoHackathon\Composer\Magento\Parser\PathTranslationParserFactory;
 
 class ModuleInstallerTest extends \PHPUnit_Framework_TestCase
 {
@@ -60,7 +62,8 @@ class ModuleInstallerTest extends \PHPUnit_Framework_TestCase
         $this->repository = $this->getMock('Composer\Repository\InstalledRepositoryInterface');
         $this->io = $this->getMock('Composer\IO\IOInterface');
 
-        $this->object = new ModuleInstaller($this->io, $this->composer);
+        $parserFactory = new PathTranslationParserFactory(new ParserFactory(), new ProjectConfig(array()));
+        $this->object = new ModuleInstaller($this->io, $this->composer, $parserFactory);
     }
 
     protected function tearDown()
@@ -98,7 +101,8 @@ class ModuleInstallerTest extends \PHPUnit_Framework_TestCase
         $extra = array_merge($composerExtra, $extra);
         $package = $this->createPackageMock($extra,$packageName);
         $this->composer->setPackage($package);
-        $installer = new ModuleInstaller($this->io, $this->composer);
+        $parserFactory = new PathTranslationParserFactory(new ParserFactory(), new ProjectConfig(array()));
+        $installer = new ModuleInstaller($this->io, $this->composer, $parserFactory);
         $this->assertInstanceOf($expectedClass, $installer->getDeployStrategy($package));
     }
 
@@ -108,19 +112,6 @@ class ModuleInstallerTest extends \PHPUnit_Framework_TestCase
     public function testSupports()
     {
         $this->assertTrue($this->object->supports('magento-module'));
-    }
-
-    /**
-     * @dataProvider parserTypeProvider
-     */
-    public function testGetParser( $packageExtra, $expectedClass, $composerExtra, $packageName, $prepareCallback )
-    {
-        $composerExtra = array_merge( $composerExtra, $this->composer->getPackage()->getExtra() );
-        $this->composer->setPackage($this->createPackageMock($composerExtra));
-        
-        $package = $this->createPackageMock( $packageExtra, $packageName );
-        $prepareCallback($this->vendorDir);
-        $this->assertInstanceOf($expectedClass, $this->object->getParser($package));
     }
     
     public function deployMethodProvider()
@@ -169,70 +160,6 @@ class ModuleInstallerTest extends \PHPUnit_Framework_TestCase
             ),
         );
     }
-    
-    public function parserTypeProvider()
-    {
-        $mapOverwrite = array(
-            'example/test2' => array('test' => 'test2'),
-            'example/test3' => array('test' => 'test3'),
-        );
-        return array(
-            array(
-                'packageExtra'  => array('map' => array('test' => 'test')),
-                'expectedClass' => 'MagentoHackathon\Composer\Magento\MapParser',
-                'composerExtra' => array( 'magento-map-overwrite' => $mapOverwrite  ),
-                'packageName'   => 'example/test1',
-                'prepareCallback' => function($vendorDir){
-                        
-                    },
-            ),
-            array(
-                'packageExtra'  => array('map' => null),
-                'expectedClass' => 'MagentoHackathon\Composer\Magento\ModmanParser',
-                'composerExtra' => array( 'magento-map-overwrite' => $mapOverwrite  ),
-                'packageName'   => 'example/test1',
-                'prepareCallback' => function($vendorDir){
-                        touch($vendorDir . DIRECTORY_SEPARATOR . 'modman');
-                    },
-            ),
-            array(
-                'packageExtra'  => array('map' => null, 'package-xml' => 'package.xml'),
-                'expectedClass' => 'MagentoHackathon\Composer\Magento\PackageXmlParser',
-                'composerExtra' => array( 'magento-map-overwrite' => $mapOverwrite  ),
-                'packageName'   => 'example/test1',
-                'prepareCallback' => function($vendorDir){
-                        touch($vendorDir . DIRECTORY_SEPARATOR . 'package.xml');
-                    },
-            ),
-            array(
-                'packageExtra'  => array('map' => array('test' => 'test')),
-                'expectedClass' => 'MagentoHackathon\Composer\Magento\MapParser',
-                'composerExtra' => array( 'magento-map-overwrite' => $mapOverwrite  ),
-                'packageName'   => 'example/test1',
-                'prepareCallback' => function($vendorDir){
-
-                    },
-            ),
-            array(
-                'packageExtra'  => array('map' => null),
-                'expectedClass' => 'MagentoHackathon\Composer\Magento\ModmanParser',
-                'composerExtra' => array( 'magento-map-overwrite' => $mapOverwrite  ),
-                'packageName'   => 'example/test1',
-                'prepareCallback' => function($vendorDir){
-                        touch($vendorDir . DIRECTORY_SEPARATOR . 'modman');
-                    },
-            ),
-            array(
-                'packageExtra'  => array('map' => null),
-                'expectedClass' => 'MagentoHackathon\Composer\Magento\MapParser',
-                'composerExtra' => array( 'magento-map-overwrite' => $mapOverwrite  ),
-                'packageName'   => 'example/test2',
-                'prepareCallback' => function($vendorDir){
-                        touch($vendorDir . DIRECTORY_SEPARATOR . 'modman');
-                    },
-            ),
-        );
-    }
 
     /*
      * Test that path mapping translation code doesn't have any effect when no
@@ -261,112 +188,6 @@ class ModuleInstallerTest extends \PHPUnit_Framework_TestCase
             array('\\app\\etc\\', '\\modules', $ds.'app'.$ds.'etc'.$ds.'modules'),
             array('\\app\\etc', 'modules\\', $ds.'app'.$ds.'etc'.$ds.'modules'.$ds)
         );
-    }
-
-    protected function createPathMappingTranslationMock()
-    {
-        return $this->createPackageMock(
-            array(
-                'map' => array(
-                    array('src/app/etc/modules/Example_Name.xml',   'app/etc/modules/Example_Name.xml'),
-                    array('src/app/code/community/Example/Name',    'app/code/community/Example/Name'),
-                    array('src/skin',                               'skin/frontend/default/default/examplename'),
-                    array('src/js',                                 'js/examplename'),
-                    array('src/media/images',                       'media/examplename_images'),
-                    array('src2/skin',                              './skin/frontend/default/default/examplename'),
-                    array('src2/js',                                './js/examplename'),
-                    array('src2/media/images',                      './media/examplename_images'),
-                )
-            )
-        );
-    }
-
-    /**
-     * @covers MagentoHackathon\Composer\Magento\Installer\ModuleInstaller::getMappings
-     */
-    public function testEtcPathMappingTranslation()
-    {
-        $package = $this->createPathMappingTranslationMock();
-        $mappings = $this->object->getParser($package)->getMappings();
-
-        $this->assertContains(array('src/app/etc/modules/Example_Name.xml', 'app/etc/modules/Example_Name.xml'), $mappings);
-    }
-
-    /**
-     * @covers MagentoHackathon\Composer\Magento\Installer\ModuleInstaller::getMappings
-     */
-    public function testCodePathMappingTranslation()
-    {
-        $package = $this->createPathMappingTranslationMock();
-        $mappings = $this->object->getParser($package)->getMappings();
-
-        $this->assertContains(array('src/app/code/community/Example/Name', 'app/code/community/Example/Name'), $mappings);
-    }
-
-    /**
-     * @covers MagentoHackathon\Composer\Magento\Installer\ModuleInstaller::getMappings
-     */
-    public function testJSPathMappingTranslation()
-    {
-        $package = $this->createPathMappingTranslationMock();
-        $mappings = $this->object->getParser($package)->getMappings();
-
-        $this->assertContains(array('src/js', 'js/examplename'), $mappings);
-    }
-
-    /**
-     * @covers MagentoHackathon\Composer\Magento\Installer\ModuleInstaller::getMappings
-     */
-    public function testSkinPathMappingTranslation()
-    {
-        $package = $this->createPathMappingTranslationMock();
-        $mappings = $this->object->getParser($package)->getMappings();
-
-        $this->assertContains(array('src/skin', 'skin/frontend/default/default/examplename'), $mappings);
-    }
-
-    /**
-     * @covers MagentoHackathon\Composer\Magento\Installer\ModuleInstaller::getMappings
-     */
-    public function testMediaPathMappingTranslation()
-    {
-        $package = $this->createPathMappingTranslationMock();
-        $mappings = $this->object->getParser($package)->getMappings();
-
-        $this->assertContains(array('src/media/images', 'media/examplename_images'), $mappings);
-    }
-
-    /**
-     * @covers MagentoHackathon\Composer\Magento\Installer\ModuleInstaller::getMappings
-     */
-    public function testJSPathMappingTranslation2()
-    {
-        $package = $this->createPathMappingTranslationMock();
-        $mappings = $this->object->getParser($package)->getMappings();
-
-        $this->assertContains(array('src2/js', './js/examplename'),$mappings);
-    }
-
-    /**
-     * @covers MagentoHackathon\Composer\Magento\Installer\ModuleInstaller::getMappings
-     */
-    public function testSkinPathMappingTranslation2()
-    {
-        $package = $this->createPathMappingTranslationMock();
-        $mappings = $this->object->getParser($package)->getMappings();
-
-        $this->assertContains(array('src2/skin', './skin/frontend/default/default/examplename'), $mappings);
-    }
-
-    /**
-     * @covers MagentoHackathon\Composer\Magento\Installer\ModuleInstaller::getMappings
-     */
-    public function testMediaPathMappingTranslation2()
-    {
-        $package = $this->createPathMappingTranslationMock();
-        $mappings = $this->object->getParser($package)->getMappings();
-
-        $this->assertContains(array('src2/media/images', './media/examplename_images'), $mappings);
     }
 
     /**

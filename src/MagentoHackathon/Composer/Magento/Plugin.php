@@ -16,6 +16,8 @@ use MagentoHackathon\Composer\Magento\Event\PackageDeployEvent;
 use MagentoHackathon\Composer\Magento\Installer\CoreInstaller;
 use MagentoHackathon\Composer\Magento\Installer\MagentoInstallerAbstract;
 use MagentoHackathon\Composer\Magento\Installer\ModuleInstaller;
+use MagentoHackathon\Composer\Magento\Parser\ParserFactory;
+use MagentoHackathon\Composer\Magento\Parser\PathTranslationParserFactory;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Composer\Composer;
@@ -138,7 +140,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $this->writeDebug('activate magento plugin');
 
         $moduleInstaller = $this->initMagentoInstaller(
-            new ModuleInstaller($io, $composer),
+            new ModuleInstaller($io, $composer, new PathTranslationParserFactory(new ParserFactory, $this->config)),
             $this->deployManagers['module']
         );
 
@@ -156,7 +158,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     private function addCoreInstaller(Composer $composer, IOInterface $io)
     {
         $coreInstaller = $this->initMagentoInstaller(
-            new CoreInstaller($io, $composer),
+            new CoreInstaller($io, $composer, new PathTranslationParserFactory(new ParserFactory, $this->config)),
             $this->deployManagers['core']
         );
         $composer->getInstallationManager()->addInstaller($coreInstaller);
