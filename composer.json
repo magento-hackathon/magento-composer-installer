@@ -76,6 +76,9 @@
     },
     "test_version":"999.0.0",
     "extra":{
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        },
         "composer-command-registry": [ "MagentoHackathon\\Composer\\Magento\\Command\\DeployCommand" ],
         "class":"MagentoHackathon\\Composer\\Magento\\Plugin"
     }
