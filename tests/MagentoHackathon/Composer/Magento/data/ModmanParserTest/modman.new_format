@@ -1,9 +1,0 @@
-
-line/one
-line/two
-
-#this is a comment which will be ignored
-
-@shell This won't run
-@import This/Will/Be/Ignored/Too
-
